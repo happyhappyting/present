@@ -3,146 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>华文公务电邮教学</title>
+    <title>公务电邮教学：青少年吸烟问题</title>
     <style>
         :root {
-            --bg: #f4f7f6;
-            --paper: #ffffff;
-            --id-hl: #fff176; /* 身份-黄色 */
-            --pp-hl: #81d4fa; /* 目的-蓝色 */
-            --qns-bg: #fffde7;
+            --id-color: #fff176; /* 身份-黄色 */
+            --pp-color: #81d4fa; /* 目的-蓝色 */
+            --copy-color: #ffccbc; /* 抄题目-浅橙 */
         }
-
-        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); line-height: 1.8; color: #333; }
-        .container { max-width: 900px; margin: 20px auto; padding: 10px; }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f0f2f5; padding: 20px; line-height: 1.6; }
+        .container { max-width: 850px; margin: 0 auto; }
+        .email-paper { background: white; padding: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
         
-        /* 页面电邮外观 */
-        .email-body { background: var(--paper); padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 4px; border: 1px solid #ddd; }
-        .subject { font-weight: bold; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; font-size: 1.1em; }
+        .block { padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 4px; transition: 0.2s; border: 1px solid transparent; }
+        .block:hover { background: #f1f8ff; border: 1px dashed #3498db; }
         
-        /* 段落块样式 */
-        .para-block { 
-            padding: 12px; 
-            margin: 8px 0; 
-            cursor: pointer; 
-            border: 1px solid transparent; 
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .para-block:hover { 
-            background: #f0f7ff; 
-            border: 1px dashed #3498db; 
-        }
-
-        /* 弹窗样式 */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); overflow-y: auto; }
-        .modal-content { background: white; margin: 3% auto; padding: 30px; width: 90%; max-width: 800px; border-radius: 12px; position: relative; }
+        /* 弹窗设计 */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+        .modal-content { background: white; margin: 2% auto; padding: 30px; width: 90%; max-width: 800px; border-radius: 12px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close { position: absolute; right: 20px; top: 10px; font-size: 35px; cursor: pointer; color: #aaa; }
         
-        /* 题目引用区 */
-        .full-qns-box { background: var(--qns-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #fbc02d; font-size: 0.9em; line-height: 1.5; }
-        .analysis-area { padding: 20px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+        /* 引导样式 */
+        .qns-box { background: #fff9c4; padding: 15px; border-radius: 8px; border: 1px solid #fbc02d; margin-bottom: 20px; font-size: 14px; }
+        .step-title { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
+        .highlight-wrap { display: inline-block; position: relative; margin: 10px 5px; text-align: center; }
+        .hl-yellow { background: var(--id-color); padding: 3px 6px; font-weight: bold; }
+        .hl-blue { background: var(--pp-color); padding: 3px 6px; font-weight: bold; }
+        .sub-label { display: block; font-size: 12px; color: #d35400; font-weight: bold; margin-top: 4px; border-top: 1px solid #ccc; }
         
-        /* 高亮与浮动文字 */
-        .hl-box { display: inline-block; position: relative; margin-bottom: 10px; text-align: center; vertical-align: top; }
-        .id-text { background-color: var(--id-hl); padding: 2px 4px; font-weight: bold; }
-        .pp-text { background-color: var(--pp-hl); padding: 2px 4px; font-weight: bold; }
-        .floating-label { display: block; font-size: 0.75em; color: #666; font-weight: bold; margin-top: 2px; }
-        
-        .mark-badge { color: white; background: #e74c3c; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; font-weight: bold; margin-bottom: 10px; display: inline-block; }
-        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 35px; cursor: pointer; color: #aaa; }
-        
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 0.9em; }
-        th { background: #eee; }
-        .guide-text { color: #2980b9; font-weight: bold; margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        td, th { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f8f9fa; }
+        .tips { color: #2980b9; font-weight: bold; border-left: 4px solid #2980b9; padding-left: 10px; margin: 15px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="email-body">
-        <div class="subject">主题：反映青少年在校外吸烟</div>
-        <p>王局长：</p>
+    <div class="email-paper">
+        <h2 style="text-align: center;">交互式范文学习</h2>
+        <p><strong>主题：</strong>反映青少年在校外吸烟</p>
+        <p><strong>王局长：</strong></p>
+
+        <div class="block" onclick="show(1)">您好，本人是红山区的居民，这次写电邮的目的是想反映青少年在校外吸烟。</div>
         
-        <div class="para-block" onclick="openPop('p1')">您好，本人是红山区的居民，这次写电邮的目的是想反映青少年在校外吸烟。</div>
-        
-        <div class="para-block" onclick="openPop('p2')">最近，本人发现家附近的学校经常能看到青少年在校外吸烟。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。这些青少年还把烟头丢进草丛里，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。</div>
-        
-        <div class="para-block" onclick="openPop('p3')">青少年在校外吸烟会带来不良的影响。第一，青少年吸烟本来就是一个违法的行为。他们在校外这样做，让学校的名声变差，也可能让别的少年有样学样。第二，他们把烟头丢进草丛，可能会引发火灾，有严重的安全问题。</div>
+        <div class="block" onclick="show(2)">最近，本人发现家附近的学校经常能看到青少年在校外吸烟。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。这些青少年还把烟头丢进草丛里，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。</div>
 
-        <div class="para-block" onclick="openPop('p4')">有鉴于这些不良影响，本人有以下建议供您参考。</div>
+        <div class="block" onclick="show(3)">青少年在校外吸烟会带来不良的影响。第一，青少年吸烟本来就是一个违法的行为。他们在校外这样做，让学校的名声变差，也可能让别的少年有样学样。第二，他们把烟头丢进草丛，可能会引发火灾，有严重的安全问题。</div>
 
-        <div class="para-block" onclick="openPop('p5')">首先，我建议警方派警察巡逻。这将起到警告作用，让他们怕面临更大的惩罚而不敢做违法的事情。</div>
+        <div class="block" onclick="show(4)">有鉴于这些不良影响，本人有以下建议供您参考。</div>
 
-        <div class="para-block" onclick="openPop('p6')">其次，我建议和学校合作提高法律意识，在校内举办讲座。这样学生就不敢做违法的事情。</div>
+        <div class="block" onclick="show(5)">首先，我建议警方派警察巡逻。这将起到警告作用，让他们怕面临更大的惩罚而不敢做违法的事情。</div>
 
-        <div class="para-block" onclick="openPop('p7')">素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<br><br>陈阿狗 启</div>
+        <div class="block" onclick="show(6)">其次，我建议和学校合作提高法律意识，在校内举办讲座。这样学生就不敢做违法的事情。</div>
+
+        <div class="block" onclick="show(7)">素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<br><br>陈阿狗 启</div>
     </div>
 </div>
 
 <div id="modal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div id="modalData"></div>
+        <span class="close" onclick="hide()">&times;</span>
+        <div id="content"></div>
     </div>
 </div>
 
 <script>
-const qns = "最近,你发现你家附近的学校经常能看到青少年在校外吸烟,还把烟头丢进草丛里。这种行为会给学生带来不好的影响,也有一些安全隐患。假设你是陈阿狗,请你写一封电邮给附近的警察局王杰森局长,向他反映这个问题并提出一些解决的建议。";
+const fullQ = "最近,你发现你家附近的学校经常能看到青少年在校外吸烟,还把烟头丢进草丛里。这种行为会给学生带来不好的影响,也有一些安全隐患。假设你是陈阿狗,请你写一封电邮给附近的警察局王杰森局长,向他反映这个问题并提出一些解决的建议。";
 
-function openPop(part) {
-    let html = `<div class="full-qns-box"><strong>完整题目：</strong><br>${qns}</div>`;
+function show(step) {
+    let html = `<div class="qns-box"><strong>题目原文：</strong><br>${fullQ}</div>`;
     
-    if(part === 'p1') {
-        html += `
-            <div class="analysis-area">
-                <span class="mark-badge">第一段 (Identity + purpose 1 mark) [cite: 21]</span>
-                <p class="guide-text">范文解析：</p>
-                <div style="font-size: 1.2em; line-height: 2.5;">
+    if(step === 1) {
+        html += `<div class="step-title">第一段 (Identity + Purpose - 1分)</div>
+                 <div class="tips">💡 引导：开头必须告诉局长你是谁，为什么要写这封信。</div>
+                 <div style="font-size:18px; line-height:3;">
                     您好，
-                    <div class="hl-box"><span class="id-text">本人是红山区的居民</span><span class="floating-label">身份 Identity</span></div>，
+                    <div class="highlight-wrap"><span class="hl-yellow">本人是红山区的居民</span><span class="sub-label">身份 Identity</span></div>，
                     这次写电邮的
-                    <div class="hl-box"><span class="pp-text">目的是想反映青少年在校外吸烟</span><span class="floating-label">目的 Purpose</span></div>。
-                </div>
-            </div>`;
-    } else if(part === 'p2') {
-        html += `
-            <div class="analysis-area">
-                <span class="mark-badge">第二段 (Describe situation 2 marks) [cite: 24]</span>
-                <p class="guide-text">注意：用自己的话描述 (Own words) [cite: 24]</p>
-                <p>最近，本人发现家附近的学校经常能看到<span style="border-bottom:2px solid orange">青少年在校外吸烟</span>(from qns)。他们三五成群站在一起吸烟，言语粗鲁... 这些青少年还把<span style="border-bottom:2px solid orange">烟头丢进草丛里</span>(from qns)... 非常危险。[cite: 25]</p>
-            </div>`;
-    } else if(part === 'p5' || part === 'p6') {
-        html += `
-            <div class="analysis-area">
-                <span class="mark-badge">建议段落 (2 marks) [cite: 32, 35]</span>
-                <p class="guide-text">参考词汇表 (Helping word table): </p>
-                <table>
-                    <tr><th>建议</th><th>作用/目的</th></tr>
-                    <tr><td>派警察巡逻 / 罚款 [cite: 34]</td><td>警告 / 怕面临更大惩罚 [cite: 34]</td></tr>
-                    <tr><td>提高法律意识 / 举办讲座 [cite: 34]</td><td>和学校合作 / 不敢做违法的事情 [cite: 34]</td></tr>
-                </table>
-            </div>`;
-    } else if(part === 'p7') {
-        html += `
-            <div class="analysis-area">
-                <span class="mark-badge">第七段 (Flattering + thank you 1 marks) [cite: 38]</span>
-                <p class="guide-text">背诵模版 (Just memorise this template): [cite: 38]</p>
-                <p style="background:#eee; padding:15px; border-radius:5px;">
-                    素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！[cite: 38]
-                </p>
-                <p><strong>陈阿狗 启 (Sign off) [cite: 38]</strong></p>
-            </div>`;
-    } else {
-        html += `<div class="analysis-area"><p>请参考 PDF 中的对应段落引导 [cite: 26, 30]。</p></div>`;
+                    <div class="highlight-wrap"><span class="hl-blue">目的是想反映青少年在校外吸烟</span><span class="sub-label">目的 Purpose (抄主题)</span></div>。
+                 </div>`;
+    } 
+    else if(step === 2) {
+        html += `<div class="step-title">第二段 (Describe Situation - 2分)</div>
+                 <div class="tips">💡 引导：用题目给的关键词，加上细节（如：不听劝告、嘲笑别人）来扩写。</div>
+                 <p>最近，本人发现家附近的学校经常能看到<b style="color:red">青少年在校外吸烟</b>。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。这些青少年还把<b style="color:red">烟头丢进草丛里</b>，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。</p>`;
+    }
+    else if(step === 3) {
+        html += `<div class="step-title">第三段 (Consequences - 2分)</div>
+                 <div class="tips">💡 引导：说明这件事的严重性。分为“名声变差”和“火灾隐患”两个重点。</div>
+                 <p>青少年在校外吸烟会带来不良的影响：<br>
+                 1. <b>违法行为</b>：损害学校名声，导致他人模仿 (Follow suit)。<br>
+                 2. <b>安全问题</b>：未熄灭的烟头可能引发火灾。</p>`;
+    }
+    else if(step === 4) {
+        html += `<div class="step-title">第四段 (Transition)</div>
+                 <div class="tips">💡 引导：这是过渡段，不计分，但能让作文更通顺。直接背下来！</div>
+                 <p style="font-size:20px; text-align:center;">“有鉴于这些不良影响，本人有以下建议供您参考。”</p>`;
+    }
+    else if(step === 5 || step === 6) {
+        html += `<div class="step-title">建议段落 (Suggestions - 4分)</div>
+                 <div class="tips">💡 引导：从下表中选择“建议”+“作用”组合成段。</div>
+                 <table>
+                    <tr><th>建议 (What to do)</th><th>作用 (Why it helps)</th></tr>
+                    <tr><td>派警察巡逻 / 罚款</td><td>产生警告作用，让他们怕面临惩罚。</td></tr>
+                    <tr><td>提高法律意识 / 举办讲座</td><td>和学校合作，让学生不敢做违法的事。</td></tr>
+                 </table>`;
+    }
+    else if(step === 7) {
+        html += `<div class="step-title">第七段 (Flattering + Sign off - 1分)</div>
+                 <div class="tips">💡 引导：赞美局长并表示感谢。这是固定格式，必须背诵。</div>
+                 <p style="background:#f8f9fa; padding:20px; border:1px solid #ddd;">
+                    素闻您一向<b>从善如流，办事效率高</b>。相信您一定会听取建议，做出改善。谢谢！
+                 </p>
+                 <p style="text-align:right; font-weight:bold;">陈阿狗 启 (Sign off)</p>`;
     }
 
-    document.getElementById('modalData').innerHTML = html;
+    document.getElementById('content').innerHTML = html;
     document.getElementById('modal').style.display = "block";
 }
 
-function closeModal() { document.getElementById('modal').style.display = "none"; }
-window.onclick = function(e) { if(e.target == document.getElementById('modal')) closeModal(); }
+function hide() { document.getElementById('modal').style.display = "none"; }
+window.onclick = function(e) { if(e.target == document.getElementById('modal')) hide(); }
 </script>
 
 </body>
