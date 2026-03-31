@@ -6,218 +6,113 @@
     <title>华文公务电邮教学 - 陈阿狗</title>
     <style>
         :root {
-            --primary-bg: #f4f7f6;
-            --email-bg: #ffffff;
-            --header-color: #2c3e50;
-            --highlight-identity: #fff176; /* Yellow */
-            --highlight-purpose: #81d4fa;   /* Blue */
-            --accent-border: #3498db;
+            --bg: #f0f2f5;
+            --paper: #ffffff;
+            --id-color: #fff176; /* Yellow for Identity */
+            --purpose-color: #81d4fa; /* Blue for Purpose */
+            --qns-text: #2c3e50;
         }
 
-        body {
-            font-family: "Microsoft YaHei", "PingFang TC", sans-serif;
-            background-color: var(--primary-bg);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* Question Section */
+        .qns-section { background: #fff; padding: 20px; border-radius: 8px; border-left: 8px solid #3498db; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        /* Email Section */
+        .email-body { background: var(--paper); padding: 40px; border-radius: 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); min-height: 600px; }
+        .subject-line { font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        
+        .para { padding: 10px; border-radius: 4px; transition: 0.3s; cursor: pointer; margin-bottom: 10px; border: 1px solid transparent; }
+        .para:hover { background: #f8f9fa; border: 1px dashed #3498db; }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .question-box {
-            background: #e3f2fd;
-            padding: 20px;
-            border-left: 5px solid #2196f3;
-            margin-bottom: 30px;
-            border-radius: 4px;
-        }
-
-        .email-container {
-            background: var(--email-bg);
-            padding: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-
-        .email-header {
-            border-bottom: 2px solid #eee;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-        }
-
-        .paragraph-block {
-            padding: 10px;
-            margin: 5px -10px;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-        }
-
-        .paragraph-block:hover {
-            background: #f0f7ff;
-            transform: scale(1.01);
-            border: 1px dashed var(--accent-border);
-        }
-
-        /* Modal / Pop-up Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 30px;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 10px;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .close-btn {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 28px;
-            cursor: pointer;
-        }
-
-        .highlight-id { background-color: var(--highlight-identity); padding: 2px 5px; font-weight: bold; }
-        .highlight-purpose { background-color: var(--highlight-purpose); padding: 2px 5px; font-weight: bold; }
-
-        .rubric-tag {
-            display: inline-block;
-            background: #ff5252;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-bottom: 10px;
-        }
-
-        .instruction {
-            color: #666;
-            font-style: italic;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); overflow-y: auto; }
+        .modal-content { background: white; margin: 5% auto; padding: 30px; width: 85%; max-width: 700px; border-radius: 12px; }
+        
+        .compare-box { background: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-bottom: 15px; border-radius: 8px; }
+        .label { font-size: 0.8em; color: #666; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        
+        /* Highlighting Classes */
+        .id-hl { background-color: var(--id-color); padding: 2px 4px; }
+        .pp-hl { background-color: var(--purpose-color); padding: 2px 4px; }
+        .mark-tag { color: red; font-weight: bold; float: right; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        td, th { border: 1px solid #ccc; padding: 8px; font-size: 0.9em; text-align: left; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="question-box">
-        <h3>题目内容 (Question Details)</h3>
-        <p>最近，你发现学校外有青少年吸烟，还把烟头丢进草丛，带来安全隐患。请以<b>陈阿狗</b>的名义，写一封电邮给警察局<b>王杰森局长</b>反映问题并提出建议。</p>
+    <div class="qns-section">
+        <strong>题目：</strong>
+        最近,你发现你家附近的学校经常能看到青少年在校外吸烟,还把烟头丢进草丛里。这种行为会给学生带来不好的影响,也有一些安全隐患。假设你是陈阿狗,请你写一封电邮给附近的警察局王杰森局长,向他反映这个问题并提出一些解决的建议。
     </div>
 
-    <p class="instruction">点击下方任何段落，查看格式要点与分析</p>
+    <div class="email-body">
+        <div class="subject-line">主题：反映青少年在校外吸烟</div>
+        <p>王局长：</p>
+        
+        <div class="para" onclick="openModal('p1')">您好，本人是红山区的居民，这次写电邮的目的是想反映青少年在校外吸烟。</div>
+        
+        <div class="para" onclick="openModal('p2')">最近，本人发现家附近的学校经常能看到青少年在校外吸烟。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。这些青少年还把烟头丢进草丛里，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。</div>
+        
+        <div class="para" onclick="openModal('p3')">青少年在校外吸烟会带来不良的影响。第一，青少年吸烟本来就是一个违法的行为。他们在校外这样做，让学校的名声变差，也可能让别的少年有样学样。第二，他们把烟头丢进草丛，可能会引发火灾，有严重的安全问题。</div>
 
-    <div class="email-container">
-        <div class="email-header">
-            <p><strong>主题：</strong> 反映青少年在校外吸烟</p>
-            <p><strong>王局长：</strong></p>
-        </div>
+        <div class="para" onclick="openModal('p4')">有鉴于这些不良影响，本人有以下建议供您参考。</div>
 
-        <div class="paragraph-block" onclick="showModal('p1')">
-            您好，本人是红山区的居民，这次写电邮的目的是想反映青少年在校外吸烟。
-        </div>
-
-        <div class="paragraph-block" onclick="showModal('p2')">
-            最近，本人发现家附近的学校经常能看到青少年在校外吸烟。他们三五成群站在一起，言语粗鲁，甚至把未熄灭的烟头丢进草丛里，非常危险。
-        </div>
-
-        <div class="paragraph-block" onclick="showModal('p3')">
-            青少年在校外吸烟会带来不良影响。第一，这属于违法行为。第二，乱丢烟头可能引发火灾，有严重安全隐患。
-        </div>
-
-        <div class="paragraph-block" onclick="showModal('p7')">
-            素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<br>
-            陈阿狗 启
-        </div>
+        <div class="para" onclick="openModal('p7')">素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<br><br>陈阿狗 启</div>
     </div>
 </div>
 
-<div id="infoModal" class="modal">
+<div id="myModal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div id="modalBody">
-            </div>
+        <span style="float:right; cursor:pointer; font-size:24px;" onclick="closeModal()">&times;</span>
+        <div id="modalContent"></div>
     </div>
 </div>
 
 <script>
-    const data = {
-        p1: {
-            title: "第一段：开头 (1分)",
-            content: `
-                <div class="rubric-tag">Identity + Purpose</div>
-                <p style="font-size: 1.2em;">
-                    您好，<span class="highlight-id">本人是红山区的居民</span>（身分 Identity），
-                    这次写电邮的<span class="highlight-purpose">目的是想反映青少年在校外吸烟</span>（目的 Purpose）。
-                </p>
-                <hr>
-                <small>💡 提示：开头必须明确交代你是谁，以及你为什么写这封信。</small>
-            `
-        },
-        p2: {
-            title: "第二段：情况描述 (2分)",
-            content: `
-                <div class="rubric-tag">Describe Situation</div>
-                <p>重点提取自题目：</p>
-                <ul>
-                    <li>经常看到青少年在校外吸烟</li>
-                    <li>烟头丢进草丛里（未熄灭）</li>
-                </ul>
-                <p>💡 提示：用自己的话重新组织，加入“言语粗鲁”或“三五成群”等细节增加真实感。</p>
-            `
-        },
-        p7: {
-            title: "结尾与署名 (1分)",
-            content: `
-                <div class="rubric-tag">Flattering + Thank you</div>
-                <p><b>必备套句：</b></p>
-                <p>“素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。”</p>
-                <p>署名：<b>陈阿狗 启</b></p>
-            `
-        }
-        // Additional paragraphs can be added here
-    };
-
-    function showModal(id) {
-        const modal = document.getElementById('infoModal');
-        const body = document.getElementById('modalBody');
-        body.innerHTML = `<h2>${data[id].title}</h2>${data[id].content}`;
-        modal.style.display = "block";
+function openModal(part) {
+    let html = "";
+    if(part === 'p1') {
+        html = `
+            <h3>第一段：身分与目的 <span class="mark-tag">(1分)</span></h3>
+            <div class="compare-box">
+                <span class="label">从题目找信息 (From Question):</span>
+                假设你是<span class="id-hl">陈阿狗</span>... 向他<span class="pp-hl">反映青少年在校外吸烟</span>。
+            </div>
+            <div class="compare-box">
+                <span class="label">你的段落 (Your Response):</span>
+                您好，<span class="id-hl">本人是红山区的居民</span>，这次写电邮的<span class="pp-hl">目的是想反映青少年在校外吸烟</span>。
+            </div>
+        `;
+    } else if(part === 'p2') {
+        html = `
+            <h3>第二段：描述情况 <span class="mark-tag">(2分)</span></h3>
+            <div class="compare-box">
+                <span class="label">保留题目关键词:</span>
+                最近，本人发现家附近的学校经常能看到<span style="border-bottom:2px solid orange">青少年在校外吸烟</span>。他们三五成群站在一起吸烟... 这些青少年还把<span style="border-bottom:2px solid orange">烟头丢进草丛里</span>... 非常危险。
+            </div>
+        `;
+    } else if(part === 'p7') {
+        html = `
+            <h3>第七段：结尾与署名 <span class="mark-tag">(1分)</span></h3>
+            <p>这一段建议直接背诵 (Just memorise this template):</p>
+            <div class="compare-box">
+                素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<br><br>
+                陈阿狗 启
+            </div>
+        `;
     }
+    
+    document.getElementById('modalContent').innerHTML = html;
+    document.getElementById('myModal').style.display = "block";
+}
 
-    function closeModal() {
-        document.getElementById('infoModal').style.display = "none";
-    }
-
-    // Close modal if user clicks outside of it
-    window.onclick = function(event) {
-        const modal = document.getElementById('infoModal');
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
+function closeModal() { document.getElementById('myModal').style.display = "none"; }
+window.onclick = function(event) { if (event.target == document.getElementById('myModal')) closeModal(); }
 </script>
 
 </body>
