@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公务电邮练习 2：反映青少年校外吸烟问题</title>
+    <title>公务电邮练习 2 - 无障碍学习版</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -13,193 +13,237 @@
             --text-color: #333;
             --hint-color: #e67e22;
             --mark-color: #e74c3c;
+            /* 默认字体设为双倍大 */
+            --base-font-size: 24px;
         }
 
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.8;
+            line-height: 1.6;
             margin: 0;
             padding: 20px;
+            font-size: var(--base-font-size);
+            transition: font-size 0.3s ease;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            padding: 20px 0;
+        /* 顶部字号切换工具栏 */
+        .toolbar {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            padding: 15px;
             border-bottom: 2px solid var(--accent-color);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .toolbar label { font-size: 18px; font-weight: bold; }
+        
+        .toolbar button {
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid var(--accent-color);
+            background: white;
+            border-radius: 5px;
+        }
+
+        .toolbar button.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .container { max-width: 900px; margin: 20px auto; }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { font-size: 1.5em; margin-bottom: 5px; }
+
+        /* 题目区：黄色高亮 */
+        .question-box {
+            background: #ffff00; /* 与题目高亮一致 */
+            border: 2px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            font-weight: bold;
             margin-bottom: 30px;
+            color: #000;
         }
 
         .section-card {
             background: var(--card-bg);
             border-radius: 12px;
             padding: 25px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--accent-color);
+            border-left: 8px solid var(--accent-color);
         }
 
-        .question-box {
-            background: #fff3cd;
-            border-left: 5px solid #ffca28;
-            padding: 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            margin-top: 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+        /* 范文中来自题目的内容高亮 */
+        .from-qn-highlight {
+            background-color: #ffff00;
+            color: #000;
+            padding: 0 4px;
         }
 
         .scoring-info {
             color: var(--mark-color);
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .english-note {
+            color: #666;
+            font-style: italic;
+            font-size: 0.8em;
+            font-weight: normal;
         }
 
         .logic-hint {
             display: block;
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 15px;
+            padding: 15px;
             background: #f0f7fd;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 0.9em;
             color: var(--accent-color);
-        }
-
-        .english-note {
-            color: #7f8c8d;
-            font-style: italic;
-            font-size: 0.9rem;
+            border: 1px dashed var(--accent-color);
         }
 
         .helping-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
+            font-size: 0.9em;
         }
 
         .helping-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            font-size: 0.95rem;
+            border: 1px solid #ccc;
+            padding: 15px;
         }
 
-        .highlight {
-            background-color: #ffff00;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #95a5a6;
-            font-size: 0.8rem;
-        }
+        footer { text-align: center; padding: 40px; color: #999; font-size: 0.7em; }
 
         @media (max-width: 600px) {
             body { padding: 10px; }
-            .section-card { padding: 15px; }
+            .toolbar { flex-wrap: wrap; }
         }
     </style>
 </head>
-<body>
+<body id="contentBody">
+
+<div class="toolbar">
+    <label>字号调节：</label>
+    <button onclick="setSize('24px', this)" class="active">标准 (双倍大)</button>
+    <button onclick="setSize('32px', this)">中</button>
+    <button onclick="setSize('40px', this)">大</button>
+</div>
 
 <div class="container">
     <header>
-        <h1>公务电邮 2：无障碍学习指南</h1>
-        <p>适合中四快捷（针对程度较弱学生设计）</p>
+        <h1>公务电邮 2：学习指南</h1>
+        <p class="english-note">专门针对程度较弱学生设计 (Accessibility Optimized)</p>
     </header>
 
     <!-- 题目区 -->
     <div class="question-box">
-        题目：最近，你发现你家附近<span class="english-note">(nearby)</span>的学校经常<span class="english-note">(often)</span>能看到青少年在校外<span class="english-note">(outside)</span>吸烟<span class="english-note">(smoke)</span>，还把烟头<span class="english-note">(cigarette butt)</span>丢进草丛<span class="english-note">(bushes)</span>里。这种行为<span class="english-note">(action)</span>会给学生带来不好的影响<span class="english-note">(influence)</span>，也有一些安全<span class="english-note">(safety)</span>隐患<span class="english-note">(hazard)</span>。假设你是<span class="highlight">陈阿狗</span><span class="english-note">(your name in this email)</span>，请你写一封电邮给附近的警察局<span class="highlight">王杰森局长</span><span class="english-note">(name and job position of recipient)</span>，向他反映<span class="english-note">(reflect)</span>这个问题并提出一些解决的建议<span class="english-note">(suggestion)</span>。 [1]
+        题目：<span class="from-qn-highlight">最近，你发现你家附近(nearby)的学校经常(often)能看到青少年在校外(outside)吸烟(smoke)，还把烟头(cigarette butt)丢进草丛(bushes)里。</span> 这种行为(action)会给学生带来不好的影响(influence)，也有一些安全(safety)隐患(hazard)。假设你是<span style="border-bottom: 2px solid black;">陈阿狗</span>(your name)，请你写一封电邮给附近的警察局<span style="border-bottom: 2px solid black;">王杰森局长</span>(recipient)，向他<span class="from-qn-highlight">反映(reflect)这个问题并提出一些解决的建议(suggestion)。</span>
     </div>
 
-    <!-- 格式引导 -->
+    <!-- 格式 -->
     <div class="section-card">
-        <h2>电邮开头格式</h2>
-        <p><strong>主题：</strong>反映青少年在校外吸烟 [1]</p>
-        <p><strong>王局长</strong><span class="english-note">(address)</span>：[1]</p>
+        <span class="scoring-info">主题与称呼</span>
+        <p><strong>主题：</strong><span class="from-qn-highlight">反映青少年在校外吸烟</span></p>
+        <p><strong>王局长</strong><span class="english-note">(address)</span>：</p>
     </div>
 
     <!-- 第一段 -->
     <div class="section-card">
-        <h2>第一段 <span class="scoring-info">(Identity + purpose 1 mark)</span></h2>
-        <p>您好，本人是红山区的居民<span class="english-note">(Identity)</span>，这次写电邮的目的是想反映青少年在校外吸烟<span class="english-note">(copy subject)</span>。（1分） [1]</p>
+        <span class="scoring-info">第一段 (Identity + purpose 1 mark)</span>
+        <p>您好，本人是红山区的居民<span class="english-note">(Identity)</span>，这次写电邮的目的是想<span class="from-qn-highlight">反映青少年在校外吸烟</span><span class="english-note">(copy subject)</span>。（1分）</p>
     </div>
 
     <!-- 第二段 -->
     <div class="section-card">
-        <h2>第二段 <span class="scoring-info">(describe situation with own words 2 marks)</span></h2>
-        <p>最近，本人发现家附近的学校经常能看到青少年在校外吸烟<span class="english-note">(from qns)</span>。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。这些青少年还把烟头丢进草丛里<span class="english-note">(from qns)</span>，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。（2分） [1, 2]</p>
+        <span class="scoring-info">第二段 (Describe situation 2 marks)</span>
+        <p><span class="from-qn-highlight">最近，本人发现家附近的学校经常能看到青少年在校外吸烟 (from qns)。</span>他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听，反而嘲笑对方。<span class="from-qn-highlight">这些青少年还把烟头丢进草丛里 (from qns)</span>，我看见他们丢烟头时，烟头甚至没有熄灭，非常危险。（2分）</p>
     </div>
 
     <!-- 第三段 -->
     <div class="section-card">
-        <h2>第三段 <span class="scoring-info">(describe consequences 2 marks)</span></h2>
-        <p>青少年在校外吸烟会带来不良的影响。第一，青少年吸烟本来就是一个<strong>违法<span class="english-note">(illegal)</span></strong>的行为。他们在校外这样做，让学校的<strong>名声<span class="english-note">reputation</span>变差<span class="english-note">(bad)</span></strong>，也可能让别的少年<strong>有样学样<span class="english-note">(Follow suit)</span></strong>。第二，他们把烟头丢进草丛，可能会引发火灾，有严重的安全问题。（2分） [2]</p>
+        <span class="scoring-info">第三段 (Describe consequences 2 marks)</span>
+        <p>青少年在校外吸烟会带来不良的影响。第一，青少年吸烟本来就是一个<strong>违法<span class="english-note">(illegal)</span></strong>的行为。他们在校外这样做，让学校的<strong>名声<span class="english-note">reputation</span>变差<span class="english-note">(bad)</span></strong>，也可能让别的少年<strong>有样学样<span class="english-note">(Follow suit)</span></strong>。第二，他们把烟头丢进草丛，可能会引发火灾，有严重的安全问题。（2分）</p>
     </div>
 
     <!-- 第四段 -->
-    <div class="section-card" style="border-left-color: #95a5a6;">
-        <h2>第四段 <span class="scoring-info">(transition, no mark, but better flow)</span></h2>
-        <p>有鉴于这些不良影响，本人有以下建议供您参考。<span class="english-note">(just memorise)</span> [2]</p>
+    <div class="section-card" style="border-left-color: #bdc3c7;">
+        <span class="scoring-info">第四段 (Transition)</span>
+        <p>有鉴于这些不良影响，本人有以下建议供您参考。<span class="english-note">(just memorise)</span></p>
     </div>
 
-    <!-- 建议内容 -->
+    <!-- 建议表格 -->
     <div class="section-card">
-        <h2>第五及第六段：建议与原因 <span class="scoring-info">(Suggestions 4 marks)</span></h2>
-        <p class="english-note">请参考以下词汇表：</p>
+        <span class="scoring-info">第五及第六段：建议词汇表 (Helping Word Table)</span>
         <table class="helping-table">
             <tr>
-                <td>派警察巡逻 <span class="english-note">(deploy police patrols)</span></td>
-                <td>警告 <span class="english-note">(issue warnings)</span></td>
+                <td>派警察巡逻 <br><span class="english-note">(deploy police patrols)</span></td>
+                <td>发出警告 <br><span class="english-note">(issue warnings)</span></td>
             </tr>
             <tr>
-                <td>罚款 <span class="english-note">(impose fines)</span></td>
-                <td>怕面临更大的惩罚 <span class="english-note">(fear of facing more serious punishment)</span></td>
+                <td>罚款 <br><span class="english-note">(impose fines)</span></td>
+                <td>怕面临更大的惩罚 <br><span class="english-note">(fear of facing more serious punishment)</span></td>
             </tr>
             <tr>
-                <td>提高法律意识 <span class="english-note">(raise legal awareness)</span></td>
-                <td>和学校合作 <span class="english-note">(collaborate with schools)</span></td>
+                <td>提高法律意识 <br><span class="english-note">(raise legal awareness)</span></td>
+                <td>和学校合作 <br><span class="english-note">(collaborate with schools)</span></td>
             </tr>
             <tr>
-                <td>在校内举办讲座 <span class="english-note">(held talk in school)</span></td>
-                <td>不敢做违法的事情 <span class="english-note">(don’t dare to do illegal thing)</span></td>
+                <td>在校内举办讲座 <br><span class="english-note">(held talk in school)</span></td>
+                <td>不敢做违法的事情 <br><span class="english-note">(don’t dare to do illegal thing)</span></td>
             </tr>
         </table>
-        <span class="logic-hint">提示：请从中选择至少两项，用“建议一、建议二”的格式写出建议及具体原因。 [3]</span>
+        <span class="logic-hint">
+            <strong>提示：</strong> 请选择两项建议。
+            例如：建议一 + 原因；建议二 + 原因。
+        </span>
     </div>
 
     <!-- 第七段 -->
     <div class="section-card">
-        <h2>第七段 <span class="scoring-info">(Flattering + thank you 1 marks)</span></h2>
-        <p>素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<span class="english-note">(1分) (just memorise this template)</span> [3, 4]</p>
+        <span class="scoring-info">第七段 (Flattering + thank you 1 marks)</span>
+        <p>素闻您一向从善如流，办事效率高。相信您一定会听取建议，做出改善。谢谢！<span class="english-note">(1分) (just memorise this template)</span></p>
     </div>
 
-    <!-- 结尾 -->
+    <!-- 落款 -->
     <div class="section-card">
-        <h2>落款 <span class="scoring-info">(Sign off)</span></h2>
-        <p>陈阿狗 启 <span class="english-note">(sign off)</span> [4]</p>
+        <span class="scoring-info">落款 (Sign off)</span>
+        <p>陈阿狗 启 <span class="english-note">(sign off)</span></p>
     </div>
 
     <footer>
-        华文助教系统 &copy; 2024 - 专为中四学生设计的无障碍练习
+        助教提醒：黄色高亮的部分表示直接从题目中获取的信息。
     </footer>
 </div>
+
+<script>
+    function setSize(size, btn) {
+        // 修改全局字体大小
+        document.documentElement.style.setProperty('--base-font-size', size);
+        
+        // 切换按钮活跃状态
+        const buttons = document.querySelectorAll('.toolbar button');
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
 
 </body>
 </html>
