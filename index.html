@@ -2,28 +2,29 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>华文互动词语卡片</title>
+    <title>华文互动词语闪卡版</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
+            --primary-color: #1890ff;
             --secondary-color: #2c3e50;
             --bg-color: #f8f9fa;
-            --card-front-bg: #ffffff;
-            --card-back-bg: #e6f7ff;
-            --base-size: 24px;
+            --card-bg: #ffffff;
+            --expand-bg: #fafafa;
+            --text-pinyin: #fa8c16;
+            --text-english: #595959;
         }
 
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background-color: var(--bg-color);
             margin: 0;
-            padding: 80px 0; /* 上下留空，营造舒适的呼吸感 */
+            padding: 80px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* 控制按钮 */
+        /* 字体大小控制 */
         .controls { 
             position: fixed; 
             top: 25px; 
@@ -46,7 +47,6 @@
         }
         .controls button:hover { background: #f0f0f0; }
 
-        /* 页面大标题 */
         .page-title {
             font-size: 36px;
             font-weight: bold;
@@ -63,9 +63,8 @@
             font-style: italic;
         }
 
-        /* 词汇区块容器 */
         .section-container {
-            width: 80%; /* 左右留空 10%，保证黄金比例呼吸感 */
+            width: 80%; /* 左右保持 10% 的呼吸空间 */
             max-width: 1200px;
             margin-bottom: 60px;
         }
@@ -73,88 +72,115 @@
         .section-header {
             font-size: 28px;
             font-weight: bold;
-            color: #1890ff;
-            border-left: 6px solid #1890ff;
+            color: var(--primary-color);
+            border-left: 6px solid var(--primary-color);
             padding-left: 15px;
             margin-bottom: 40px;
         }
 
-        /* 卡片网格布局：一行 3 张，间距宽敞 */
+        /* 一行排3张卡片，间距宽敞 */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 40px;
         }
 
-        /* 3D 翻转卡片核心结构 */
-        .flashcard {
-            background-color: transparent;
-            height: 200px;
-            perspective: 1000px; /* 激活3D空间 */
+        /* 升级版折叠卡片结构 */
+        .vocab-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s ease;
+        }
+        .vocab-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        /* 卡片主体：字词与朗读按钮 */
+        .card-main {
+            padding: 30px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
         }
 
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-radius: 16px;
-        }
-
-        /* 触碰或点击激活翻转 */
-        .flashcard:hover .card-inner, .flashcard.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden; /* 隐藏背面 */
-            backface-visibility: hidden;
+        .word-wrapper {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            border-radius: 16px;
-            padding: 20px;
-            box-sizing: border-box;
-            border: 1px solid rgba(0,0,0,0.05);
+            gap: 12px;
         }
 
-        /* 卡片正面：纯净大字 */
-        .card-front {
-            background-color: var(--card-front-bg);
-            color: var(--secondary-color);
-        }
-        
-        .card-front .chinese-word {
-            font-size: 32px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        /* 卡片背面：双语释义 */
-        .card-back {
-            background-color: var(--card-back-bg);
-            color: #003a8c;
-            transform: rotateY(180deg);
-        }
-
-        .card-back .pinyin {
-            font-size: 22px;
-            font-weight: 500;
-            color: #fa8c16;
-            margin-bottom: 12px;
-        }
-
-        .card-back .english {
+        .word-num {
             font-size: 18px;
-            color: #595959;
+            color: #bfbfbf;
+            font-weight: bold;
+        }
+
+        .chinese-word {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            letter-spacing: 1px;
+        }
+
+        /* 朗读按钮样式 */
+        .audio-btn {
+            background: #e6f7ff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        .audio-btn:hover {
+            background: #bae7ff;
+            transform: scale(1.05);
+        }
+        .audio-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--primary-color);
+        }
+
+        /* 底下额外展开的内容容器 */
+        .card-expand {
+            max-height: 0;
+            overflow: hidden;
+            background-color: var(--expand-bg);
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid transparent;
+        }
+
+        /* 激活展开状态 */
+        .vocab-card.active .card-expand {
+            max-height: 160px; /* 给予足够展开高度 */
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .expand-content {
+            padding: 20px 24px;
+        }
+
+        .pinyin {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-pinyin);
+            margin-bottom: 8px;
+        }
+
+        .english {
+            font-size: 16px;
+            color: var(--text-english);
             line-height: 1.4;
         }
     </style>
@@ -162,13 +188,13 @@
 <body>
 
 <div class="controls">
-    <button onclick="setSize(20)">小 (S)</button>
-    <button onclick="setSize(26)">中 (M)</button>
-    <button onclick="setSize(32)">大 (L)</button>
+    <button onclick="setSize(22)">小 (S)</button>
+    <button onclick="setSize(28)">中 (M)</button>
+    <button onclick="setSize(34)">大 (L)</button>
 </div>
 
-<div class="page-title">互动词语闪卡 (Interactive Flashcards)</div>
-<div class="page-subtitle">鼠标悬停或点击卡片即可查看拼音与英文意思 (Hover or tap to flip)</div>
+<div class="page-title">互动词语教学闪卡</div>
+<div class="page-subtitle">点击卡片展开拼音与英文，点击喇叭图标可聆听发音 (Click to expand / Listen)</div>
 
 <div id="mainArea" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
 
@@ -176,179 +202,204 @@
         <div class="section-header">（一）核心词汇</div>
         <div class="card-grid">
             
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">名额</span></div>
-                    <div class="card-back"><div class="pinyin">míng é</div><div class="english">Quota / Number of places available</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">1</span><span class="chinese-word">名额</span></div>
+                    <button class="audio-btn" onclick="speak('名额', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">míng é</div><div class="english">Quota / Number of places available</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">师傅</span></div>
-                    <div class="card-back"><div class="pinyin">shī fu</div><div class="english">Master / Qualified worker</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">2</span><span class="chinese-word">师傅</span></div>
+                    <button class="audio-btn" onclick="speak('师傅', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">shī fu</div><div class="english">Master / Qualified worker</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">裁缝</span></div>
-                    <div class="card-back"><div class="pinyin">cái féng</div><div class="english">Tailor</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">3</span><span class="chinese-word">裁缝</span></div>
+                    <button class="audio-btn" onclick="speak('裁缝', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">cái féng</div><div class="english">Tailor</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">编织</span></div>
-                    <div class="card-back"><div class="pinyin">biān zhī</div><div class="english">To weave / To knit</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">4</span><span class="chinese-word">编织</span></div>
+                    <button class="audio-btn" onclick="speak('编织', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">biān zhī</div><div class="english">To weave / To knit</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">烘焙</span></div>
-                    <div class="card-back"><div class="pinyin">hōng bèi</div><div class="english">Baking</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">5</span><span class="chinese-word">烘焙</span></div>
+                    <button class="audio-btn" onclick="speak('烘焙', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">hōng bèi</div><div class="english">Baking</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">匠人</span></div>
-                    <div class="card-back"><div class="pinyin">jiàng rén</div><div class="english">Artisan / Craftsman</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">6</span><span class="chinese-word">匠人</span></div>
+                    <button class="audio-btn" onclick="speak('匠人', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">jiàng rén</div><div class="english">Artisan / Craftsman</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">链接</span></div>
-                    <div class="card-back"><div class="pinyin">liàn jiē</div><div class="english">Link (internet / connection)</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">7</span><span class="chinese-word">链接</span></div>
+                    <button class="audio-btn" onclick="speak('链接', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">liàn jiē</div><div class="english">Link (internet / connection)</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">族裔</span></div>
-                    <div class="card-back"><div class="pinyin">zú yì</div><div class="english">Ethnic group / Ethnicity</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">8</span><span class="chinese-word">族裔</span></div>
+                    <button class="audio-btn" onclick="speak('族裔', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">zú yì</div><div class="english">Ethnic group / Ethnicity</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">擅长</span></div>
-                    <div class="card-back"><div class="pinyin">shàn cháng</div><div class="english">To be good at / To excel in</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">9</span><span class="chinese-word">擅长</span></div>
+                    <button class="audio-btn" onclick="speak('擅长', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">shàn cháng</div><div class="english">To be good at / To excel in</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">添砖加瓦</span></div>
-                    <div class="card-back"><div class="pinyin">tiān zhuān jiā wǎ</div><div class="english">Do one's share to help / Contribute</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">10</span><span class="chinese-word">添砖加瓦</span></div>
+                    <button class="audio-btn" onclick="speak('添砖加瓦', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">tiān zhuān jiā wǎ</div><div class="english">Do one's share to help / Contribute</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">真挚</span></div>
-                    <div class="card-back"><div class="pinyin">zhēn zhì</div><div class="english">Sincere / Cordial</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">11</span><span class="chinese-word">真挚</span></div>
+                    <button class="audio-btn" onclick="speak('真挚', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">zhēn zhì</div><div class="english">Sincere / Cordial</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">黎明</span></div>
-                    <div class="card-back"><div class="pinyin">lí míng</div><div class="english">Dawn / Daybreak</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">12</span><span class="chinese-word">黎明</span></div>
+                    <button class="audio-btn" onclick="speak('黎明', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">lí míng</div><div class="english">Dawn / Daybreak</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">苏醒</span></div>
-                    <div class="card-back"><div class="pinyin">sū xǐng</div><div class="english">To wake up / To regain consciousness</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">13</span><span class="chinese-word">苏醒</span></div>
+                    <button class="audio-btn" onclick="speak('苏醒', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">sū xǐng</div><div class="english">To wake up / To regain consciousness</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">禽</span></div>
-                    <div class="card-back"><div class="pinyin">qín</div><div class="english">Birds / Fowl</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">14</span><span class="chinese-word">禽</span></div>
+                    <button class="audio-btn" onclick="speak('禽', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">qín</div><div class="english">Birds / Fowl</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">晚霞</span></div>
-                    <div class="card-back"><div class="pinyin">wǎn xiá</div><div class="english">Sunset glow / Afterglow</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">15</span><span class="chinese-word">晚霞</span></div>
+                    <button class="audio-btn" onclick="speak('晚霞', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">wǎn xiá</div><div class="english">Sunset glow / Afterglow</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">宵夜</span></div>
-                    <div class="card-back"><div class="pinyin">xiāo yè</div><div class="english">Late-night snack / Supper</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">16</span><span class="chinese-word">宵夜</span></div>
+                    <button class="audio-btn" onclick="speak('宵夜', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">xiāo yè</div><div class="english">Late-night snack / Supper</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">讲述</span></div>
-                    <div class="card-back"><div class="pinyin">jiǎng shù</div><div class="english">To tell / To narrate / To relate</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">17</span><span class="chinese-word">讲述</span></div>
+                    <button class="audio-btn" onclick="speak('讲述', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">jiǎng shù</div><div class="english">To tell / To narrate / To relate</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">鲜为人知</span></div>
-                    <div class="card-back"><div class="pinyin">xiǎn wéi rén zhī</div><div class="english">Rarely known to anyone</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">18</span><span class="chinese-word">鲜为人知</span></div>
+                    <button class="audio-btn" onclick="speak('鲜为人知', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">xiǎn wéi rén zhī</div><div class="english">Rarely known to anyone</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">慷慨解囊</span></div>
-                    <div class="card-back"><div class="pinyin">kāng kǎi jiě náng</div><div class="english">Help generously with money</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">19</span><span class="chinese-word">慷慨解囊</span></div>
+                    <button class="audio-btn" onclick="speak('慷慨解囊', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">kāng kǎi jiě náng</div><div class="english">Help generously with money</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">艰难</span></div>
-                    <div class="card-back"><div class="pinyin">jiān nán</div><div class="english">Difficult / Hard / Arduous</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">20</span><span class="chinese-word">艰难</span></div>
+                    <button class="audio-btn" onclick="speak('艰难', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">jiān nán</div><div class="english">Difficult / Hard / Arduous</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">唇齿相依</span></div>
-                    <div class="card-back"><div class="pinyin">chún chǐ xiāng yī</div><div class="english">Closely related as lips and teeth</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">21</span><span class="chinese-word">唇齿相依</span></div>
+                    <button class="audio-btn" onclick="speak('唇齿相依', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">chún chǐ xiāng yī</div><div class="english">Closely related as lips and teeth</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">篱笆</span></div>
-                    <div class="card-back"><div class="pinyin">lí ba</div><div class="english">Fence</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">22</span><span class="chinese-word">篱笆</span></div>
+                    <button class="audio-btn" onclick="speak('篱笆', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">lí ba</div><div class="english">Fence</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">恰好</span></div>
-                    <div class="card-back"><div class="pinyin">qià hǎo</div><div class="english">Just right / Coincidentally</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">23</span><span class="chinese-word">恰好</span></div>
+                    <button class="audio-btn" onclick="speak('恰好', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">qià hǎo</div><div class="english">Just right / Coincidentally</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">谚语</span></div>
-                    <div class="card-back"><div class="pinyin">yàn yǔ</div><div class="english">Proverb / Saying</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">24</span><span class="chinese-word">谚语</span></div>
+                    <button class="audio-btn" onclick="speak('谚语', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">yàn yǔ</div><div class="english">Proverb / Saying</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">侥幸</span></div>
-                    <div class="card-back"><div class="pinyin">jiǎo xìng</div><div class="english">By sheer luck / Fluke</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">25</span><span class="chinese-word">侥幸</span></div>
+                    <button class="audio-btn" onclick="speak('侥幸', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">jiǎo xìng</div><div class="english">By sheer luck / Fluke</div></div></div>
             </div>
 
         </div>
@@ -358,46 +409,52 @@
         <div class="section-header" style="color: #2f54eb; border-color: #2f54eb;">（二）词语替换</div>
         <div class="card-grid">
             
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">冷漠</span></div>
-                    <div class="card-back"><div class="pinyin">lěng mò</div><div class="english">Cold and detached / Indifferent</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">1</span><span class="chinese-word">冷漠</span></div>
+                    <button class="audio-btn" onclick="speak('冷漠', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">lěng mò</div><div class="english">Cold and detached / Indifferent</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">计较</span></div>
-                    <div class="card-back"><div class="pinyin">jì jiào</div><div class="english">To haggle over / To fuss about</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">2</span><span class="chinese-word">计较</span></div>
+                    <button class="audio-btn" onclick="speak('计较', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">jì jiào</div><div class="english">To haggle over / To fuss about</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">渡过</span></div>
-                    <div class="card-back"><div class="pinyin">dù guò</div><div class="english">To pass through (a crisis/period)</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">3</span><span class="chinese-word">渡过</span></div>
+                    <button class="audio-btn" onclick="speak('渡过', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">dù guò</div><div class="english">To pass through (a crisis / period)</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">和睦</span></div>
-                    <div class="card-back"><div class="pinyin">hé mù</div><div class="english">Harmonious / Peaceful</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">4</span><span class="chinese-word">和睦</span></div>
+                    <button class="audio-btn" onclick="speak('和睦', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">hé mù</div><div class="english">Harmonious / Peaceful</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">亲戚</span></div>
-                    <div class="card-back"><div class="pinyin">qīn qi</div><div class="english">Relatives</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">5</span><span class="chinese-word">亲戚</span></div>
+                    <button class="audio-btn" onclick="speak('亲戚', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">qīn qi</div><div class="english">Relatives</div></div></div>
             </div>
 
-            <div class="flashcard" onclick="this.classList.toggle('flipped')">
-                <div class="card-inner">
-                    <div class="card-front"><span class="chinese-word">援手</span></div>
-                    <div class="card-back"><div class="pinyin">yuán shǒu</div><div class="english">Helping hand</div></div>
+            <div class="vocab-card">
+                <div class="card-main" onclick="toggleCard(this.parentNode)">
+                    <div class="word-wrapper"><span class="word-num">6</span><span class="chinese-word">援手</span></div>
+                    <button class="audio-btn" onclick="speak('援手', event)"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
                 </div>
+                <div class="card-expand"><div class="expand-content"><div class="pinyin">yuán shǒu</div><div class="english">Helping hand</div></div></div>
             </div>
 
         </div>
@@ -406,17 +463,40 @@
 </div>
 
 <script>
+// 控制点击展开/折叠
+function toggleCard(cardEl) {
+    cardEl.classList.toggle('active');
+}
+
+// 华语原生语音朗读（带阻止冒泡机制，防止触发卡片折叠）
+function speak(text, event) {
+    if (event) event.stopPropagation(); // 关键：点击喇叭时，不触发卡片的展开/收起
+    
+    if ('speechSynthesis' in window) {
+        // 先取消当前正在进行的朗读，避免声音重叠
+        window.speechSynthesis.cancel();
+        
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; // 设置为标准华语
+        utterance.rate = 0.85;    // 语速略微放慢，方便学生听清发音细节
+        utterance.pitch = 1.0;    // 音高
+        
+        window.speechSynthesis.speak(utterance);
+    } else {
+        alert("很抱歉，您的浏览器或设备目前不支持语音朗读功能。");
+    }
+}
+
+// 动态调整全局字号大小
 function setSize(w) {
-    // 动态调整正面汉字的字号
     document.querySelectorAll('.chinese-word').forEach(el => {
-        el.style.fontSize = (w + 10) + 'px';
-    });
-    // 动态调整背面解释的字号
-    document.querySelectorAll('.pinyin').forEach(el => {
         el.style.fontSize = w + 'px';
     });
+    document.querySelectorAll('.pinyin').forEach(el => {
+        el.style.fontSize = (w - 6) + 'px';
+    });
     document.querySelectorAll('.english').forEach(el => {
-        el.style.fontSize = (w - 4) + 'px';
+        el.style.fontSize = (w - 10) + 'px';
     });
 }
 </script>
