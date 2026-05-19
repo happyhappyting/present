@@ -1,218 +1,424 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公务电邮 2：多色高亮教学版</title>
+    <title>华文互动词语卡片</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --mark-color: #e74c3c;
-            /* 默认字号：双倍大 (24px) */
-            --base-font-size: 24px;
-
-            /* 柔和高亮颜色定义 */
-            --hl-blue: #d1ecf1;   /* 背景情况 */
-            --hl-green: #d4edda;  /* 写作目的 */
-            --hl-yellow: #fff3cd; /* 收件人 */
-            --hl-pink: #f8d7da;   /* 寄件人/名字 */
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --card-front-bg: #ffffff;
+            --card-back-bg: #e6f7ff;
+            --base-size: 24px;
         }
 
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7;
             margin: 0;
-            padding: 20px;
-            font-size: var(--base-font-size);
-            transition: all 0.3s ease;
-        }
-
-        /* 字体控制工具栏 */
-        .toolbar {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-bottom: 2px solid var(--accent-color);
-            z-index: 1000;
+            padding: 80px 0; /* 上下留空，营造舒适的呼吸感 */
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            backdrop-filter: blur(5px);
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            flex-direction: column;
+            align-items: center;
         }
 
-        .toolbar label { font-size: 18px; font-weight: bold; margin-right: 10px; }
-        .toolbar button {
-            padding: 8px 16px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid var(--accent-color);
-            background: white;
-            border-radius: 6px;
+        /* 控制按钮 */
+        .controls { 
+            position: fixed; 
+            top: 25px; 
+            right: 45px; 
+            z-index: 1001; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
         }
-
-        .toolbar button.active {
-            background: var(--accent-color);
-            color: white;
+        .controls button { 
+            font-size: 16px; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border: 1px solid #eee; 
+            background: white; 
+            border-radius: 8px; 
+            margin-left: 8px; 
+            transition: 0.3s;
         }
+        .controls button:hover { background: #f0f0f0; }
 
-        .container { max-width: 900px; margin: 20px auto; }
-
-        /* 题目盒子 - 修正为两段并取消刺眼黄色 */
-        .question-box {
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .question-box p { margin: 0 0 15px 0; }
-
-        /* 高亮样式 */
-        .hl-blue { background-color: var(--hl-blue); padding: 2px 4px; border-radius: 4px; }
-        .hl-green { background-color: var(--hl-green); padding: 2px 4px; border-radius: 4px; }
-        .hl-yellow { background-color: var(--hl-yellow); padding: 2px 4px; border-radius: 4px; }
-        .hl-pink { background-color: var(--hl-pink); padding: 2px 4px; border-radius: 4px; }
-
-        .section-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-left: 10px solid var(--accent-color);
-        }
-
-        .scoring-info {
-            color: var(--mark-color);
+        /* 页面大标题 */
+        .page-title {
+            font-size: 36px;
             font-weight: bold;
-            font-size: 0.8em;
-            display: block;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .english-note {
-            color: #666;
+        .page-subtitle {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 60px;
+            text-align: center;
             font-style: italic;
-            font-size: 0.8em;
-            font-weight: normal;
         }
 
-        .logic-hint {
-            display: block;
-            margin-top: 15px;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 8px;
-            font-size: 0.85em;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+        /* 词汇区块容器 */
+        .section-container {
+            width: 80%; /* 左右留空 10%，保证黄金比例呼吸感 */
+            max-width: 1200px;
+            margin-bottom: 60px;
         }
 
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85em; }
-        table td { border: 1px solid #cbd5e1; padding: 12px; }
+        .section-header {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1890ff;
+            border-left: 6px solid #1890ff;
+            padding-left: 15px;
+            margin-bottom: 40px;
+        }
 
-        footer { text-align: center; padding: 40px; color: #94a3b8; font-size: 0.7em; }
+        /* 卡片网格布局：一行 3 张，间距宽敞 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        /* 3D 翻转卡片核心结构 */
+        .flashcard {
+            background-color: transparent;
+            height: 200px;
+            perspective: 1000px; /* 激活3D空间 */
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 16px;
+        }
+
+        /* 触碰或点击激活翻转 */
+        .flashcard:hover .card-inner, .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* 隐藏背面 */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* 卡片正面：纯净大字 */
+        .card-front {
+            background-color: var(--card-front-bg);
+            color: var(--secondary-color);
+        }
+        
+        .card-front .chinese-word {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* 卡片背面：双语释义 */
+        .card-back {
+            background-color: var(--card-back-bg);
+            color: #003a8c;
+            transform: rotateY(180deg);
+        }
+
+        .card-back .pinyin {
+            font-size: 22px;
+            font-weight: 500;
+            color: #fa8c16;
+            margin-bottom: 12px;
+        }
+
+        .card-back .english {
+            font-size: 18px;
+            color: #595959;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
-<div class="toolbar">
-    <label>字号：</label>
-    <button onclick="setSize('24px', this)" class="active">标准 (双倍)</button>
-    <button onclick="setSize('32px', this)">中</button>
-    <button onclick="setSize('40px', this)">大</button>
+<div class="controls">
+    <button onclick="setSize(20)">小 (S)</button>
+    <button onclick="setSize(26)">中 (M)</button>
+    <button onclick="setSize(32)">大 (L)</button>
 </div>
 
-<div class="container">
-    <header style="text-align:center; margin-bottom:40px;">
-        <h1 style="font-size: 1.4em;">公务电邮 2：无障碍学习系统</h1>
-        <p class="english-note">彩色高亮区分：蓝色=背景, 绿色=目的, 黄色=收信人, 粉色=姓名</p>
-    </header>
+<div class="page-title">互动词语闪卡 (Interactive Flashcards)</div>
+<div class="page-subtitle">鼠标悬停或点击卡片即可查看拼音与英文意思 (Hover or tap to flip)</div>
 
-    <!-- 题目区：分为两段 -->
-    <div class="question-box">
-        <p>
-            <span class="hl-blue">最近，你发现你家附近(nearby)的学校经常(often)能看到青少年在校外(outside)吸烟(smoke)，还把烟头(cigarette butt)丢进草丛(bushes)里。</span> 这种行为(action)会给学生带来不好的影响(influence)，也有一些安全(safety)隐患(hazard)。
-        </p>
-        <p>
-            假设你是<span class="hl-pink">陈阿狗</span>(your name)，请你写一封电邮给附近的警察局<span class="hl-yellow">王杰森局长</span>(recipient)，向他<span class="hl-green">反映(reflect)这个问题并提出一些解决的建议(suggestion)</span>。
-        </p>
+<div id="mainArea" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+
+    <div class="section-container">
+        <div class="section-header">（一）核心词汇</div>
+        <div class="card-grid">
+            
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">名额</span></div>
+                    <div class="card-back"><div class="pinyin">míng é</div><div class="english">Quota / Number of places available</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">师傅</span></div>
+                    <div class="card-back"><div class="pinyin">shī fu</div><div class="english">Master / Qualified worker</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">裁缝</span></div>
+                    <div class="card-back"><div class="pinyin">cái féng</div><div class="english">Tailor</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">编织</span></div>
+                    <div class="card-back"><div class="pinyin">biān zhī</div><div class="english">To weave / To knit</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">烘焙</span></div>
+                    <div class="card-back"><div class="pinyin">hōng bèi</div><div class="english">Baking</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">匠人</span></div>
+                    <div class="card-back"><div class="pinyin">jiàng rén</div><div class="english">Artisan / Craftsman</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">链接</span></div>
+                    <div class="card-back"><div class="pinyin">liàn jiē</div><div class="english">Link (internet / connection)</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">族裔</span></div>
+                    <div class="card-back"><div class="pinyin">zú yì</div><div class="english">Ethnic group / Ethnicity</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">擅长</span></div>
+                    <div class="card-back"><div class="pinyin">shàn cháng</div><div class="english">To be good at / To excel in</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">添砖加瓦</span></div>
+                    <div class="card-back"><div class="pinyin">tiān zhuān jiā wǎ</div><div class="english">Do one's share to help / Contribute</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">真挚</span></div>
+                    <div class="card-back"><div class="pinyin">zhēn zhì</div><div class="english">Sincere / Cordial</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">黎明</span></div>
+                    <div class="card-back"><div class="pinyin">lí míng</div><div class="english">Dawn / Daybreak</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">苏醒</span></div>
+                    <div class="card-back"><div class="pinyin">sū xǐng</div><div class="english">To wake up / To regain consciousness</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">禽</span></div>
+                    <div class="card-back"><div class="pinyin">qín</div><div class="english">Birds / Fowl</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">晚霞</span></div>
+                    <div class="card-back"><div class="pinyin">wǎn xiá</div><div class="english">Sunset glow / Afterglow</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">宵夜</span></div>
+                    <div class="card-back"><div class="pinyin">xiāo yè</div><div class="english">Late-night snack / Supper</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">讲述</span></div>
+                    <div class="card-back"><div class="pinyin">jiǎng shù</div><div class="english">To tell / To narrate / To relate</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">鲜为人知</span></div>
+                    <div class="card-back"><div class="pinyin">xiǎn wéi rén zhī</div><div class="english">Rarely known to anyone</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">慷慨解囊</span></div>
+                    <div class="card-back"><div class="pinyin">kāng kǎi jiě náng</div><div class="english">Help generously with money</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">艰难</span></div>
+                    <div class="card-back"><div class="pinyin">jiān nán</div><div class="english">Difficult / Hard / Arduous</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">唇齿相依</span></div>
+                    <div class="card-back"><div class="pinyin">chún chǐ xiāng yī</div><div class="english">Closely related as lips and teeth</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">篱笆</span></div>
+                    <div class="card-back"><div class="pinyin">lí ba</div><div class="english">Fence</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">恰好</span></div>
+                    <div class="card-back"><div class="pinyin">qià hǎo</div><div class="english">Just right / Coincidentally</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">谚语</span></div>
+                    <div class="card-back"><div class="pinyin">yàn yǔ</div><div class="english">Proverb / Saying</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">侥幸</span></div>
+                    <div class="card-back"><div class="pinyin">jiǎo xìng</div><div class="english">By sheer luck / Fluke</div></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- 格式区 -->
-    <div class="section-card">
-        <span class="scoring-info">电邮格式 (Format)</span>
-        <p><strong>主题：</strong><span class="hl-green">反映青少年在校外吸烟</span></p>
-        <p><strong><span class="hl-yellow">王局长</span></strong><span class="english-note">(address)</span>：</p>
+    <div class="section-container">
+        <div class="section-header" style="color: #2f54eb; border-color: #2f54eb;">（二）词语替换</div>
+        <div class="card-grid">
+            
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">冷漠</span></div>
+                    <div class="card-back"><div class="pinyin">lěng mò</div><div class="english">Cold and detached / Indifferent</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">计较</span></div>
+                    <div class="card-back"><div class="pinyin">jì jiào</div><div class="english">To haggle over / To fuss about</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">渡过</span></div>
+                    <div class="card-back"><div class="pinyin">dù guò</div><div class="english">To pass through (a crisis/period)</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">和睦</span></div>
+                    <div class="card-back"><div class="pinyin">hé mù</div><div class="english">Harmonious / Peaceful</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">亲戚</span></div>
+                    <div class="card-back"><div class="pinyin">qīn qi</div><div class="english">Relatives</div></div>
+                </div>
+            </div>
+
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span class="chinese-word">援手</span></div>
+                    <div class="card-back"><div class="pinyin">yuán shǒu</div><div class="english">Helping hand</div></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- 第一段 -->
-    <div class="section-card">
-        <span class="scoring-info">第一段 (Identity + Purpose - 1 Mark)</span>
-        <p>您好，本人是红山区的居民<span class="english-note">(Identity)</span>，这次写电邮的目的是想<span class="hl-green">反映青少年在校外吸烟</span><span class="english-note">(copy from subject)</span>。（1分）</p>
-    </div>
-
-    <!-- 第二段 -->
-    <div class="section-card">
-        <span class="scoring-info">第二段 (Situation - 2 Marks)</span>
-        <p><span class="hl-blue">最近，本人发现家附近的学校经常能看到青少年在校外吸烟</span><span class="english-note">(from qns)</span>。他们三五成群站在一起吸烟，言语粗鲁，有人劝他们别在校外吸烟，他们也不听。这些青少年<span class="hl-blue">还把烟头丢进草丛里</span><span class="english-note">(from qns)</span>，非常危险。（2分）</p>
-    </div>
-
-    <!-- 第三段 -->
-    <div class="section-card">
-        <span class="scoring-info">第三段 (Consequences - 2 Marks)</span>
-        <p>青少年吸烟是<strong>违法<span class="english-note">(illegal)</span></strong>的行为。他们在校外这样做，让学校的<strong>名声<span class="english-note">reputation</span>变差</strong>，也可能让别的少年<strong>有样学样<span class="english-note">(follow suit)</span></strong>。此外，丢烟头可能引发火灾。（2分）</p>
-    </div>
-
-    <!-- 建议区 -->
-    <div class="section-card">
-        <span class="scoring-info">第五/六段 (Suggestions - 4 Marks)</span>
-        <p>有鉴于此，本人有以下<span class="hl-green">建议(suggestions)</span>供您参考：</p>
-        <table>
-            <tr>
-                <td>派警察巡逻 <br><span class="english-note">(deploy police)</span></td>
-                <td>发出警告/罚款 <br><span class="english-note">(warnings/fines)</span></td>
-            </tr>
-            <tr>
-                <td>举办讲座 <br><span class="english-note">(hold talks)</span></td>
-                <td>提高法律意识 <br><span class="english-note">(raise awareness)</span></td>
-            </tr>
-        </table>
-        <div class="logic-hint">提示：请选择两项建议并说明原因。</div>
-    </div>
-
-    <!-- 结尾 -->
-    <div class="section-card">
-        <span class="scoring-info">第七段 & 落款 (Ending - 1 Mark)</span>
-        <p>素闻您一向从善如流，办事效率高。相信您一定会听取建议。谢谢！</p>
-        <p><strong><span class="hl-pink">陈阿狗</span></strong> 启 <span class="english-note">(sign off)</span></p>
-    </div>
-
-    <footer>
-        华文
-    </footer>
 </div>
 
 <script>
-    function setSize(size, btn) {
-        document.documentElement.style.setProperty('--base-font-size', size);
-        const buttons = document.querySelectorAll('.toolbar button');
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
+function setSize(w) {
+    // 动态调整正面汉字的字号
+    document.querySelectorAll('.chinese-word').forEach(el => {
+        el.style.fontSize = (w + 10) + 'px';
+    });
+    // 动态调整背面解释的字号
+    document.querySelectorAll('.pinyin').forEach(el => {
+        el.style.fontSize = w + 'px';
+    });
+    document.querySelectorAll('.english').forEach(el => {
+        el.style.fontSize = (w - 4) + 'px';
+    });
+}
 </script>
 
 </body>
